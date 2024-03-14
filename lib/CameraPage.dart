@@ -17,6 +17,7 @@ class _CameraPageState extends State<CameraPage> {
   bool _isRearCameraSelected = true;
   int selectedtimer = 0;
   int timertime = 0;
+  Timer? time;
   @override
   void initState() {
     // TODO: implement initState
@@ -46,6 +47,7 @@ class _CameraPageState extends State<CameraPage> {
   }
 
   startTimer() {
+    startcountdown();
     Timer(
         Duration(
             seconds: selectedtimer == 1
@@ -54,9 +56,18 @@ class _CameraPageState extends State<CameraPage> {
                     ? 10
                     : 15), () {
       takePicture();
+      time!.cancel();
       setState(() {
         selectedtimer = 0;
         timertime = 0;
+      });
+    });
+  }
+
+  startcountdown() {
+    time = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        timertime = timertime - 1;
       });
     });
   }
@@ -89,7 +100,7 @@ class _CameraPageState extends State<CameraPage> {
     return Scaffold(
         body: _cameraController.value.isInitialized
             ? Padding(
-                padding: const EdgeInsets.only(bottom: 20),
+                padding: const EdgeInsets.only(bottom: 5),
                 child: Column(
                   children: [
                     Stack(
@@ -118,10 +129,18 @@ class _CameraPageState extends State<CameraPage> {
                         )
                       ],
                     ),
-                    const Expanded(child: SizedBox()),
-                    //Center(
-                    // child:
-                    //  Text(timertime == 0 ? "" : timertime.toString())),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Center(
+                        child: Text(
+                      timertime == 0 ? "" : '${timertime.toString()} Sec',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    )),
+                    SizedBox(
+                      height: 10,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -130,6 +149,7 @@ class _CameraPageState extends State<CameraPage> {
                             if (selectedtimer == 0) {
                               setState(() {
                                 selectedtimer = 1;
+                                timertime = 5;
                               });
                               startTimer();
                             }
@@ -162,6 +182,7 @@ class _CameraPageState extends State<CameraPage> {
                             if (selectedtimer == 0) {
                               setState(() {
                                 selectedtimer = 2;
+                                timertime = 10;
                               });
                               startTimer();
                             }
@@ -193,6 +214,7 @@ class _CameraPageState extends State<CameraPage> {
                             if (selectedtimer == 0) {
                               setState(() {
                                 selectedtimer = 3;
+                                timertime = 15;
                               });
                               startTimer();
                             }
